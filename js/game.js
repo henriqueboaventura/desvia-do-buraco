@@ -294,8 +294,13 @@ function fillAhead() {
 
       if (available.length > 0) {
         const laneIdx = available[Math.floor(Math.random() * available.length)];
-        // More potholes: car car pothole pothole pothole bike
-        const types = ['car', 'car', 'pothole', 'pothole', 'pothole', 'bike'];
+        // Pothole density grows with distance: starts 3/6, reaches 5/6 by 1200 m
+        const n = Math.min(2, Math.floor(dist / 600));
+        const types = [
+          ...Array(Math.max(0, 2 - n)).fill('car'),
+          ...Array(3 + n).fill('pothole'),
+          'bike',
+        ];
         const type  = types[Math.floor(Math.random() * types.length)];
         obstacles.push({
           seg: nextSeg,
@@ -584,8 +589,9 @@ function onHit(type) {
     shakeTimer = 55;
     invincible  = 80;
   } else {
-    // Car or bike: full stop, longer invincibility, speed ramps back up
+    // Car or bike: full stop, shake harder, longer invincibility, speed ramps back up
     player.speed = 0;
+    shakeTimer   = 90;
     invincible   = 150;
   }
   if (lives <= 0) {
