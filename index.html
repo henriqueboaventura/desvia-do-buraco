@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Desvia do Buraco! – Osório/RS</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div id="wrap">
+  <div id="hud">
+    <div>PTS <span class="hv" id="hpts">0</span></div>
+    <div>DIST <span class="hv" id="hdist">0m</span></div>
+    <div><span class="hv" id="hliv">♥♥♥</span></div>
+    <div>NÍV <span class="hv" id="hlv">1</span></div>
+  </div>
+
+  <canvas id="c" width="320" height="480"></canvas>
+
+  <div id="street-ticker">
+    <span class="icon">&#128739;</span><span class="name">Osório / RS</span>
+  </div>
+
+  <div id="ctrls">
+    <button class="btn" id="bl">&#9664;</button>
+    <button class="btn" id="br">&#9654;</button>
+  </div>
+
+  <div id="ov">
+    <h1>DESVIA DO<br>BURACO!</h1>
+    <div class="sub">Osório / Rio Grande do Sul</div>
+    <div class="info">
+      <b>&#9664; &#9654;</b> para desviar<br>
+      Evite <b>carros</b>, <b>buracos</b> e <b>bikes</b><br>
+      Velocidade aumenta com a distância
+    </div>
+    <div id="go"><br>Pontuação: <span id="gpts">0</span></div>
+    <button id="pbtn">INICIAR</button>
+  </div>
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>

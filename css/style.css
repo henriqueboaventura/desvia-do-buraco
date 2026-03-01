@@ -1,0 +1,128 @@
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#0a0a0a;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  touch-action:none;
+  font-family:monospace;
+}
+
+#wrap{
+  position:relative;
+  width:100%;
+  max-width:420px;
+}
+
+canvas{
+  display:block;
+  width:100%;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+
+/* ── HUD ── */
+#hud{
+  background:#111;
+  border-bottom:2px solid #2a2a2a;
+  padding:5px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:#ccc;
+  font-size:11px;
+  letter-spacing:1px;
+}
+.hv{color:#ffdd00;font-weight:bold;font-size:14px}
+
+/* Street name ticker */
+#street-ticker{
+  background:#003399;
+  border-top:2px solid #0055cc;
+  border-bottom:2px solid #001f77;
+  padding:4px 12px;
+  color:#fff;
+  font-size:13px;
+  font-weight:bold;
+  letter-spacing:1px;
+  text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:26px;
+  transition:opacity 0.3s;
+}
+#street-ticker .icon{font-size:14px}
+#street-ticker .name{color:#ffdd00}
+
+/* ── Controls ── */
+#ctrls{
+  background:#111;
+  display:flex;
+  gap:6px;
+  padding:8px;
+  border-top:1px solid #1a1a1a;
+}
+.btn{
+  flex:1;
+  background:#1a1a1a;
+  border:2px solid #3a3a3a;
+  border-radius:10px;
+  color:#fff;
+  font-size:32px;
+  padding:18px 0;
+  text-align:center;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:background 0.08s, border-color 0.08s;
+}
+.btn:active, .btn.on{
+  background:#2a2a2a;
+  border-color:#ffdd00;
+}
+
+/* ── Overlay (start / game over) ── */
+#ov{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.88);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  text-align:center;
+  color:#fff;
+  z-index:20;
+}
+#ov h1{
+  font-size:26px;
+  color:#ffdd00;
+  text-shadow:3px 3px #aa0000;
+  letter-spacing:3px;
+  margin-bottom:4px;
+  line-height:1.2;
+}
+#ov .sub{color:#888;font-size:10px;margin-bottom:18px}
+#ov .info{font-size:13px;line-height:2;margin-bottom:20px}
+#ov .info b{color:#ffdd00}
+#go{display:none;margin-bottom:14px;font-size:13px}
+#go span{color:#ffdd00;font-size:18px}
+#pbtn{
+  background:#ffdd00;
+  color:#000;
+  border:none;
+  padding:14px 36px;
+  font-size:15px;
+  font-family:monospace;
+  font-weight:bold;
+  letter-spacing:2px;
+  cursor:pointer;
+  border-radius:4px;
+  text-transform:uppercase;
+}
+#pbtn:hover{background:#ffe840}
