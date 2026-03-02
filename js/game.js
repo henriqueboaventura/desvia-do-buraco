@@ -76,26 +76,33 @@ function mkFallbackSp(key, w, h, originY) {
 }
 
 function loadSprites(onDone) {
-  //                  key       file         srcW srcH  originY  rs
+  // Sprite sheet layout (sprites/spritesheet.png  277×86)
+  //        key        x    y    w    h  originY   rs
   const specs = [
-    ['player',  'player',     60, 42,  1,    1   ],
-    ['car0',    'car_red',    39, 34,  1,    1.6 ],
-    ['car1',    'car_blue',   41, 35,  1,    1.6 ],
-    ['car2',    'car_green',  38, 34,  1,    1.6 ],
-    ['car3',    'car_yellow', 39, 33,  1,    1.6 ],
-    ['car4',    'car_white',  60, 42,  1,    1.0 ],
-    ['bike',    'bike',       19, 25,  1.0,  2.0 ],
-    ['pothole', 'pothole',    80, 44,  0.5,  1   ],
+    ['player',    0,   0,  60,  42,   1,    1   ],
+    ['car0',     60,   0,  39,  34,   1,    1.6 ],
+    ['car1',     99,   0,  41,  35,   1,    1.6 ],
+    ['car2',    140,   0,  38,  34,   1,    1.6 ],
+    ['car3',    178,   0,  39,  33,   1,    1.6 ],
+    ['car4',    217,   0,  60,  42,   1,    1.0 ],
+    ['bike',      0,  42,  19,  25,   1.0,  2.0 ],
+    ['pothole',  19,  42,  80,  44,   0.5,  1   ],
   ];
-  let pending = specs.length;
-  const done = () => { if (--pending === 0) onDone(); };
 
-  for (const [key, file, w, h, originY, rs] of specs) {
-    const img = new Image();
-    img.onload  = () => { SP[key] = { img, x: 0, y: 0, w, h, originY, rs }; done(); };
-    img.onerror = () => { SP[key] = { ...mkFallbackSp(key, w, h, originY), rs }; done(); };
-    img.src = 'sprites/' + file + '.png';
-  }
+  const sheet = new Image();
+  sheet.onload  = () => {
+    for (const [key, x, y, w, h, originY, rs] of specs) {
+      SP[key] = { img: sheet, x, y, w, h, originY, rs };
+    }
+    onDone();
+  };
+  sheet.onerror = () => {
+    for (const [key, x, y, w, h, originY, rs] of specs) {
+      SP[key] = { ...mkFallbackSp(key, w, h, originY), rs };
+    }
+    onDone();
+  };
+  sheet.src = 'sprites/spritesheet.png';
 }
 
 // ─── Sign sprite cache ────────────────────────────────────────────────────────
