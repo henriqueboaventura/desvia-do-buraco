@@ -18,7 +18,7 @@ const SP_SCALE   = 1.5;  // sprite size multiplier
 const MAX_POSX   = 125;  // player lateral limit (pixels)
 
 // Two city lanes (road coords, positive = left of center)
-const LANES = [0.16, -0.16];
+const LANES = [0.214, -0.214];
 const LANE_COOLDOWN_MIN = 20; // min segments between obstacles in same lane
 
 const STREETS = [
@@ -80,7 +80,7 @@ function loadSprites(onDone) {
     ['car2',    'car_green',  60, 42,  1,    1.25],
     ['car3',    'car_yellow', 60, 42,  1,    1.25],
     ['car4',    'car_white',  60, 42,  1,    1.25],
-    ['bike',    'bike',       38, 56,  0.25, 1.8 ],
+    ['bike',    'bike',       38, 56,  0.25, 2.4 ],
     ['pothole', 'pothole',    80, 44,  0.5,  1   ],
   ];
   let pending = specs.length;
@@ -497,8 +497,8 @@ function doRender() {
       const dh = sp ? Math.round(sp.h * s) : 0;
       // Shadow sits at the rendered sprite's bottom edge (wheel contact point)
       const shadowY = Math.round(b.sy + dh * (1 - (sp?.originY || 1)));
-      const rx = Math.round((b.type === 'bike' ? 10 : 20) * s);
-      const ry = Math.round((b.type === 'bike' ?  4 :  7) * s);
+      const rx = Math.round((b.type === 'bike' ? 9 : 16) * s);
+      const ry = Math.round((b.type === 'bike' ? 3 :  5) * s);
       if (rx > 0 && ry > 0) {
         cx.save();
         cx.globalAlpha = 0.35;
@@ -527,7 +527,7 @@ function doRender() {
       cx.save();
       cx.translate(W2 + shakeX, H - 18 + shakeY);
       cx.rotate(lean);
-      const ps = 1.35;
+      const ps = 1.6;
       const pw = Math.round(psp.w * ps), ph = Math.round(psp.h * ps);
       // Shadow
       cx.globalAlpha = 0.4;
