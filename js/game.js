@@ -479,7 +479,7 @@ function doRender() {
         const sp  = obs.type === 'sign' ? getSign(obs.signText)
                   : obs.type === 'turbine' ? getTurbine()
                   : SP[obs.sn];
-        spBuf.push({ sp, sx: spx, sy: H2 + Math.min(lastProjH, ph1), sc: sc1 });
+        spBuf.push({ sp, sx: spx, sy: H2 + Math.min(lastProjH, ph1), sc: sc1, type: obs.type });
       }
     }
 
@@ -490,6 +490,20 @@ function doRender() {
   // Draw sprites far→near (painter's algorithm via pop)
   while (spBuf.length) {
     const b = spBuf.pop();
+    if (b.type === 'car' || b.type === 'bike') {
+      const s  = SP_SCALE * b.sc;
+      const rx = Math.round((b.type === 'bike' ? 10 : 20) * s);
+      const ry = Math.round((b.type === 'bike' ?  4 :  7) * s);
+      if (rx > 0 && ry > 0) {
+        cx.save();
+        cx.globalAlpha = 0.35;
+        cx.fillStyle = '#000';
+        cx.beginPath();
+        cx.ellipse(Math.round(b.sx), Math.round(b.sy), rx, ry, 0, 0, Math.PI * 2);
+        cx.fill();
+        cx.restore();
+      }
+    }
     blitSprite(b.sp, b.sx, b.sy, b.sc);
   }
 
@@ -510,6 +524,14 @@ function doRender() {
       cx.rotate(lean);
       const ps = 1.35;
       const pw = Math.round(psp.w * ps), ph = Math.round(psp.h * ps);
+      // Shadow
+      cx.globalAlpha = 0.4;
+      cx.fillStyle = '#000';
+      cx.beginPath();
+      cx.ellipse(0, -5, pw * 0.44, 9, 0, 0, Math.PI * 2);
+      cx.fill();
+      cx.globalAlpha = 1;
+      // Car
       cx.drawImage(psp.img, 0, 0, psp.w, psp.h, -pw/2, -ph, pw, ph);
       cx.restore();
     }
