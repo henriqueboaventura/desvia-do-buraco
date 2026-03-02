@@ -600,8 +600,9 @@ function doRender() {
       ox = -dw * (1 - t / 30);   // exit back left
     }
     cx.globalAlpha = 1;
+    // Subtract 4px so any left-edge border in the PNG is hidden off-screen
     cx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight,
-      Math.round(ox), H - dh, dw, dh);
+      Math.round(ox) - 4, H - dh, dw, dh);
   }
   drawToasty(toasty2Img, toasty2Anim); // level 5+
   drawToasty(toastyImg,  toastyAnim);  // level 10+
