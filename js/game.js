@@ -676,7 +676,7 @@ function tick(ts) {
   if (newLv > level) {
     level = newLv;
     lvUpNotif = { text: `NÍVEL ${level}!`, timer: 80 };
-    if (level >= 5  && (level === 5  || (level -  5) % 3 === 0)) {
+    if (level === 5) {
       toasty2Anim = { timer: 130 };
     }
     if (level >= 10 && (level === 10 || (level - 10) % 3 === 0)) {
