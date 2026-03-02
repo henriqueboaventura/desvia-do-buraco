@@ -126,3 +126,81 @@ canvas{
   text-transform:uppercase;
 }
 #pbtn:hover{background:#ffe840}
+
+/* ── Pixel font ── */
+.px-label{
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;color:#888;
+  display:block;margin-bottom:6px;letter-spacing:1px;
+}
+
+/* ── Name entry ── */
+#name-wrap{margin-top:14px;display:none}
+#pname{
+  font-family:'Press Start 2P',monospace;
+  font-size:11px;width:100%;
+  background:#000;color:#ffdd00;
+  border:2px solid #ffdd00;padding:7px 8px;
+  text-transform:uppercase;letter-spacing:3px;
+  outline:none;box-sizing:border-box;
+}
+#sbtn{
+  font-family:'Press Start 2P',monospace;font-size:9px;
+  background:#ffdd00;color:#000;border:none;
+  padding:9px 0;margin-top:8px;width:100%;
+  cursor:pointer;letter-spacing:2px;
+}
+#sbtn:hover{background:#ffe840}
+
+/* ── Ranking button (main menu) ── */
+#rank-btn{
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  background:transparent;color:#555;
+  border:1px solid #333;padding:7px 12px;
+  margin-top:8px;cursor:pointer;letter-spacing:1px;display:none;
+}
+#rank-btn:hover{color:#aaa;border-color:#555}
+
+/* ── Leaderboard overlay ── */
+#lb{
+  position:absolute;inset:0;
+  background:rgba(0,0,10,0.96);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:20px;z-index:25;
+}
+#lb h2{
+  font-family:'Press Start 2P',monospace;
+  font-size:14px;color:#ffdd00;
+  text-shadow:3px 3px #aa0000;
+  letter-spacing:3px;margin-bottom:18px;
+}
+#lb-scores{width:100%;margin-bottom:4px}
+.lb-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;padding:5px 2px;
+  border-bottom:1px solid #1a1a1a;color:#ccc;
+}
+.lb-row.me{color:#ffdd00}
+.lb-empty{
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;color:#444;text-align:center;padding:14px 0;
+}
+.lb-rank{width:22px;color:#555;flex-shrink:0}
+.lb-name{flex:1;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-pts{flex-shrink:0;color:#88ff88}
+.lb-row.me .lb-pts{color:#ffdd00}
+#lb-play{
+  font-family:'Press Start 2P',monospace;font-size:9px;
+  background:#ffdd00;color:#000;border:none;
+  padding:11px 28px;margin-top:16px;cursor:pointer;letter-spacing:2px;
+}
+#lb-play:hover{background:#ffe840}
+#lb-back{
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  background:transparent;color:#555;
+  border:1px solid #333;padding:7px 12px;
+  margin-top:8px;cursor:pointer;letter-spacing:1px;
+}
+#lb-back:hover{color:#aaa;border-color:#555}

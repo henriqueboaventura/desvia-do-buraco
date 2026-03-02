@@ -759,6 +759,58 @@ C.addEventListener('touchend', e => {
   if (Math.abs(dx) > 28) currentLane = dx < 0 ? 0 : 1;
 }, { passive: true });
 
+// ─── Scoreboard (Supabase) ────────────────────────────────────────────────────
+// ↓ Replace with your Supabase project URL and anon key
+const SB_URL = 'https://nlmlmwmdzsikwvbzdnys.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sbWxtd21kenNpa3d2YnpkbnlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0OTMzNzMsImV4cCI6MjA4ODA2OTM3M30.kQm_CTs94GCefP1ToeR2YU4fYpW8VQQCZMk5zdU99hQ';
+
+const SB_HEADERS = {
+  'apikey': SB_KEY,
+  'Authorization': `Bearer ${SB_KEY}`,
+  'Content-Type': 'application/json',
+};
+
+async function getScores() {
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/scores?select=name,pts&order=pts.desc&limit=10`,
+      { headers: SB_HEADERS }
+    );
+    return res.ok ? await res.json() : [];
+  } catch { return []; }
+}
+
+async function saveScore(name, pts) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/scores`, {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ name, pts: Math.floor(pts) }),
+    });
+  } catch { /* ignore network errors */ }
+}
+
+async function showLeaderboard(highlightName) {
+  const box = document.getElementById('lb-scores');
+  box.innerHTML = '<div class="lb-empty">CARREGANDO...</div>';
+  document.getElementById('lb').style.display = 'flex';
+  const scores = await getScores();
+  box.innerHTML = '';
+  if (!scores.length) {
+    box.innerHTML = '<div class="lb-empty">SEM PONTUAÇÕES AINDA</div>';
+  } else {
+    scores.forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'lb-row' + (highlightName && s.name === highlightName ? ' me' : '');
+      row.innerHTML =
+        `<span class="lb-rank">${String(i + 1).padStart(2, '0')}</span>` +
+        `<span class="lb-name">${s.name}</span>` +
+        `<span class="lb-pts">${String(s.pts).padStart(6, '0')}</span>`;
+      box.appendChild(row);
+    });
+  }
+}
+
 // ─── Overlay ──────────────────────────────────────────────────────────────────
 function showOver(isOver) {
   const ov   = document.getElementById('ov');
@@ -768,21 +820,30 @@ function showOver(isOver) {
   const go   = document.getElementById('go');
   const btn  = document.getElementById('pbtn');
 
+  const nameWrap = document.getElementById('name-wrap');
+  const rankBtn  = document.getElementById('rank-btn');
+
   if (isOver) {
     h1.innerHTML   = 'FIM DE JOGO';
     h1.style.color = '#f44';
     sub.textContent = 'Osório venceu desta vez…';
     info.innerHTML  = `Você rodou <b>${Math.floor(dist)}m</b> pelas ruas de Osório!<br>Nível <b>${level}</b> alcançado`;
     document.getElementById('gpts').textContent = Math.floor(score);
-    go.style.display = 'block';
-    btn.textContent  = 'TENTAR NOVAMENTE';
+    document.getElementById('pname').value = '';
+    go.style.display  = 'block';
+    nameWrap.style.display = 'block';
+    btn.style.display = 'none';
+    rankBtn.style.display = 'none';
   } else {
     h1.innerHTML    = 'DESVIA DO<br>BURACO!';
     h1.style.color  = '#ffdd00';
     sub.textContent = 'Osório / Rio Grande do Sul';
     info.innerHTML  = '<b>◀ ▶</b> para desviar<br>Evite <b>carros</b>, <b>buracos</b> e <b>bikes</b><br>Velocidade aumenta com a distância';
-    go.style.display = 'none';
-    btn.textContent  = 'INICIAR';
+    go.style.display  = 'none';
+    nameWrap.style.display = 'none';
+    btn.style.display = '';
+    btn.textContent   = 'INICIAR';
+    rankBtn.style.display = '';
   }
   ov.style.display = 'flex';
 }
@@ -791,6 +852,43 @@ document.getElementById('pbtn').addEventListener('click', () => {
   document.getElementById('ov').style.display = 'none';
   initGame();
   running = true;
+});
+
+// Save score → show leaderboard
+async function submitScore() {
+  const btn  = document.getElementById('sbtn');
+  const raw  = document.getElementById('pname').value.trim();
+  const name = (raw || 'ANÔNIMO').toUpperCase().slice(0, 12);
+  btn.textContent = '...';
+  btn.disabled = true;
+  await saveScore(name, score);
+  document.getElementById('ov').style.display = 'none';
+  btn.textContent = 'SALVAR';
+  btn.disabled = false;
+  await showLeaderboard(name);
+}
+document.getElementById('sbtn').addEventListener('click', submitScore);
+document.getElementById('pname').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitScore();
+});
+
+// Leaderboard → restart
+document.getElementById('lb-play').addEventListener('click', () => {
+  document.getElementById('lb').style.display = 'none';
+  initGame();
+  running = true;
+});
+
+// Leaderboard → back to main menu
+document.getElementById('lb-back').addEventListener('click', () => {
+  document.getElementById('lb').style.display = 'none';
+  showOver(false);
+});
+
+// Main menu → view ranking
+document.getElementById('rank-btn').addEventListener('click', async () => {
+  document.getElementById('ov').style.display = 'none';
+  await showLeaderboard(null);
 });
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
   <title>Desvia do Buraco! – Osório/RS</title>
   <link rel="stylesheet" href="css/style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="wrap">
@@ -34,8 +36,23 @@
       Evite <b>carros</b>, <b>buracos</b> e <b>bikes</b><br>
       Velocidade aumenta com a distância
     </div>
-    <div id="go"><br>Pontuação: <span id="gpts">0</span></div>
+    <div id="go">
+      <br>Pontuação: <span id="gpts">0</span>
+      <div id="name-wrap">
+        <label class="px-label" for="pname">SEU NOME:</label>
+        <input id="pname" type="text" maxlength="12" autocomplete="off" spellcheck="false" placeholder="____________"/>
+        <button id="sbtn">SALVAR</button>
+      </div>
+    </div>
     <button id="pbtn">INICIAR</button>
+    <button id="rank-btn">RANKING</button>
+  </div>
+
+  <div id="lb">
+    <h2>TOP 10</h2>
+    <div id="lb-scores"></div>
+    <button id="lb-play">JOGAR</button>
+    <button id="lb-back">VOLTAR</button>
   </div>
 </div>
 
