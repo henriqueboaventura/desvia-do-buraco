@@ -72,23 +72,24 @@ function mkFallbackSp(key, w, h, originY) {
 }
 
 function loadSprites(onDone) {
+  //                  key       file         srcW srcH  originY  rs
   const specs = [
-    ['player',  'player',     60, 42,  1  ],
-    ['car0',    'car_red',    60, 42,  1  ],
-    ['car1',    'car_blue',   60, 42,  1  ],
-    ['car2',    'car_green',  60, 42,  1  ],
-    ['car3',    'car_yellow', 60, 42,  1  ],
-    ['car4',    'car_white',  60, 42,  1  ],
-    ['bike',    'bike',       38, 56,  1  ],
-    ['pothole', 'pothole',    80, 44,  0.5],
+    ['player',  'player',     60, 42,  1,    1   ],
+    ['car0',    'car_red',    60, 42,  1,    1.25],
+    ['car1',    'car_blue',   60, 42,  1,    1.25],
+    ['car2',    'car_green',  60, 42,  1,    1.25],
+    ['car3',    'car_yellow', 60, 42,  1,    1.25],
+    ['car4',    'car_white',  60, 42,  1,    1.25],
+    ['bike',    'bike',       38, 56,  0.78, 1.45],
+    ['pothole', 'pothole',    80, 44,  0.5,  1   ],
   ];
   let pending = specs.length;
   const done = () => { if (--pending === 0) onDone(); };
 
-  for (const [key, file, w, h, originY] of specs) {
+  for (const [key, file, w, h, originY, rs] of specs) {
     const img = new Image();
-    img.onload  = () => { SP[key] = { img, x: 0, y: 0, w, h, originY }; done(); };
-    img.onerror = () => { SP[key] = mkFallbackSp(key, w, h, originY);   done(); };
+    img.onload  = () => { SP[key] = { img, x: 0, y: 0, w, h, originY, rs }; done(); };
+    img.onerror = () => { SP[key] = { ...mkFallbackSp(key, w, h, originY), rs }; done(); };
     img.src = 'sprites/' + file + '.png';
   }
 }
@@ -397,7 +398,7 @@ function drawSeg(y1, sc1, of1, y2, sc2, of2, alt) {
 
 function blitSprite(sp, sx, sy, sc) {
   if (!sp) return;
-  const s  = SP_SCALE * sc;
+  const s  = SP_SCALE * sc * (sp.rs || 1);
   const dw = Math.round(sp.w * s);
   const dh = Math.round(sp.h * s);
   if (dw < 1 || dh < 1) return;
@@ -491,7 +492,7 @@ function doRender() {
   while (spBuf.length) {
     const b = spBuf.pop();
     if (b.type === 'car' || b.type === 'bike') {
-      const s  = SP_SCALE * b.sc;
+      const s  = SP_SCALE * b.sc * (b.sp?.rs || 1);
       const rx = Math.round((b.type === 'bike' ? 10 : 20) * s);
       const ry = Math.round((b.type === 'bike' ?  4 :  7) * s);
       if (rx > 0 && ry > 0) {
