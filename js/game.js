@@ -588,18 +588,20 @@ function doRender() {
   // 7. Toasty! easter eggs (slide in from left → hold → slide back left)
   function drawToasty(img, anim) {
     if (!anim || anim.timer <= 0 || !img.complete || !img.naturalWidth) return;
-    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const dw = Math.round(img.naturalWidth  * 0.45);
+    const dh = Math.round(img.naturalHeight * 0.45);
     const t = anim.timer;
     let ox;
     if (t > 110) {
-      ox = -iw * (t - 110) / 20; // enter
+      ox = -dw * (t - 110) / 20; // enter
     } else if (t > 30) {
       ox = 0;                     // hold
     } else {
-      ox = -iw * (1 - t / 30);   // exit back left
+      ox = -dw * (1 - t / 30);   // exit back left
     }
     cx.globalAlpha = 1;
-    cx.drawImage(img, 0, 0, iw, ih, Math.round(ox), H - ih, iw, ih);
+    cx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight,
+      Math.round(ox), H - dh, dw, dh);
   }
   drawToasty(toasty2Img, toasty2Anim); // level 5+
   drawToasty(toastyImg,  toastyAnim);  // level 10+
