@@ -21,6 +21,10 @@ const MAX_POSX   = 125;  // player lateral limit (pixels)
 const LANES = [0.214, -0.214];
 const LANE_COOLDOWN_MIN = 20; // min segments between obstacles in same lane
 
+// ─── Toasty ───────────────────────────────────────────────────────────────────
+const toastyImg = new Image();  toastyImg.src  = 'sprites/toasty.png';   // 300×216, level 10+
+const toasty2Img = new Image(); toasty2Img.src = 'sprites/toasty-2.png'; // 300×189, level 5+
+
 const STREETS = [
   'Av. Getúlio Vargas', 'R. Borges de Medeiros', 'Av. 24 de Maio',
   'R. Júlio de Castilhos', 'R. Bento Gonçalves', 'R. Garibaldi',
@@ -75,12 +79,12 @@ function loadSprites(onDone) {
   //                  key       file         srcW srcH  originY  rs
   const specs = [
     ['player',  'player',     60, 42,  1,    1   ],
-    ['car0',    'car_red',    60, 42,  1,    1.25],
-    ['car1',    'car_blue',   60, 42,  1,    1.25],
-    ['car2',    'car_green',  60, 42,  1,    1.25],
-    ['car3',    'car_yellow', 60, 42,  1,    1.25],
-    ['car4',    'car_white',  60, 42,  1,    1.25],
-    ['bike',    'bike',       38, 56,  0.25, 2.4 ],
+    ['car0',    'car_red',    39, 34,  1,    1.6 ],
+    ['car1',    'car_blue',   41, 35,  1,    1.6 ],
+    ['car2',    'car_green',  38, 34,  1,    1.6 ],
+    ['car3',    'car_yellow', 39, 33,  1,    1.6 ],
+    ['car4',    'car_white',  60, 42,  1,    1.0 ],
+    ['bike',    'bike',       19, 25,  1.0,  2.0 ],
     ['pothole', 'pothole',    80, 44,  0.5,  1   ],
   ];
   let pending = specs.length;
@@ -245,6 +249,8 @@ let laneCooldown = [0, 0];      // per-lane min-segment gap tracker
 let lastObstacleSeg = [-99, -99]; // last segment each lane had an obstacle
 let shakeTimer = 0;   // pothole shake countdown
 let hitType    = null; // 'pothole' | 'vehicle' – last collision type
+let toastyAnim  = null; // { timer } – level 10+ easter egg
+let toasty2Anim = null; // { timer } – level  5+ easter egg
 
 function initGame() {
   currentLane = 1; // start in right lane
@@ -260,7 +266,7 @@ function initGame() {
   lvUpNotif = null; popups = [];
   laneCooldown = [0, 0];
   lastObstacleSeg = [-99, -99];
-  shakeTimer = 0; hitType = null;
+  shakeTimer = 0; hitType = null; toastyAnim = null; toasty2Anim = null;
   nextSeg = Math.floor(player.position / SEG_SIZE) + 8;
   fillAhead();
   updHUD();
@@ -295,11 +301,11 @@ function fillAhead() {
 
       if (available.length > 0) {
         const laneIdx = available[Math.floor(Math.random() * available.length)];
-        // Pothole density grows with distance: starts 3/6, reaches 5/6 by 1200 m
+        // Pothole density grows with distance, but cars always present (min 1)
         const n = Math.min(2, Math.floor(dist / 600));
         const types = [
-          ...Array(Math.max(0, 2 - n)).fill('car'),
-          ...Array(3 + n).fill('pothole'),
+          ...Array(Math.max(1, 2 - n)).fill('car'),
+          ...Array(2 + n).fill('pothole'),
           'bike',
         ];
         const type  = types[Math.floor(Math.random() * types.length)];
@@ -578,6 +584,25 @@ function doRender() {
     cx.fillText('MAIS RÁPIDO!', W2, H2 + 4);
     cx.globalAlpha = 1;
   }
+
+  // 7. Toasty! easter eggs (slide in from left → hold → slide back left)
+  function drawToasty(img, anim) {
+    if (!anim || anim.timer <= 0 || !img.complete || !img.naturalWidth) return;
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const t = anim.timer;
+    let ox;
+    if (t > 110) {
+      ox = -iw * (t - 110) / 20; // enter
+    } else if (t > 30) {
+      ox = 0;                     // hold
+    } else {
+      ox = -iw * (1 - t / 30);   // exit back left
+    }
+    cx.globalAlpha = 1;
+    cx.drawImage(img, 0, 0, iw, ih, Math.round(ox), H - ih, iw, ih);
+  }
+  drawToasty(toasty2Img, toasty2Anim); // level 5+
+  drawToasty(toastyImg,  toastyAnim);  // level 10+
 }
 
 // ─── Collision ────────────────────────────────────────────────────────────────
@@ -648,8 +673,16 @@ function tick(ts) {
   if (newLv > level) {
     level = newLv;
     lvUpNotif = { text: `NÍVEL ${level}!`, timer: 80 };
+    if (level >= 5  && (level === 5  || (level -  5) % 3 === 0)) {
+      toasty2Anim = { timer: 130 };
+    }
+    if (level >= 10 && (level === 10 || (level - 10) % 3 === 0)) {
+      toastyAnim  = { timer: 130 };
+    }
   }
-  if (lvUpNotif && lvUpNotif.timer > 0) lvUpNotif.timer -= dt;
+  if (lvUpNotif   && lvUpNotif.timer   > 0) lvUpNotif.timer   -= dt;
+  if (toastyAnim  && toastyAnim.timer  > 0) toastyAnim.timer  -= dt;
+  if (toasty2Anim && toasty2Anim.timer > 0) toasty2Anim.timer -= dt;
 
   // Advance road position
   player.position += player.speed * dt;
