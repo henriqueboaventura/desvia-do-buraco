@@ -80,7 +80,7 @@ function loadSprites(onDone) {
     ['car2',    'car_green',  60, 42,  1,    1.25],
     ['car3',    'car_yellow', 60, 42,  1,    1.25],
     ['car4',    'car_white',  60, 42,  1,    1.25],
-    ['bike',    'bike',       38, 56,  0.78, 1.45],
+    ['bike',    'bike',       38, 56,  0.45, 1.8 ],
     ['pothole', 'pothole',    80, 44,  0.5,  1   ],
   ];
   let pending = specs.length;
@@ -492,7 +492,11 @@ function doRender() {
   while (spBuf.length) {
     const b = spBuf.pop();
     if (b.type === 'car' || b.type === 'bike') {
-      const s  = SP_SCALE * b.sc * (b.sp?.rs || 1);
+      const sp = b.sp;
+      const s  = SP_SCALE * b.sc * (sp?.rs || 1);
+      const dh = sp ? Math.round(sp.h * s) : 0;
+      // Shadow sits at the rendered sprite's bottom edge (wheel contact point)
+      const shadowY = Math.round(b.sy + dh * (1 - (sp?.originY || 1)));
       const rx = Math.round((b.type === 'bike' ? 10 : 20) * s);
       const ry = Math.round((b.type === 'bike' ?  4 :  7) * s);
       if (rx > 0 && ry > 0) {
@@ -500,7 +504,7 @@ function doRender() {
         cx.globalAlpha = 0.35;
         cx.fillStyle = '#000';
         cx.beginPath();
-        cx.ellipse(Math.round(b.sx), Math.round(b.sy), rx, ry, 0, 0, Math.PI * 2);
+        cx.ellipse(Math.round(b.sx), shadowY, rx, ry, 0, 0, Math.PI * 2);
         cx.fill();
         cx.restore();
       }
