@@ -80,7 +80,7 @@ function loadSprites(onDone) {
     ['car2',    'car_green',  60, 42,  1,    1.25],
     ['car3',    'car_yellow', 60, 42,  1,    1.25],
     ['car4',    'car_white',  60, 42,  1,    1.25],
-    ['bike',    'bike',       38, 56,  0.45, 1.8 ],
+    ['bike',    'bike',       38, 56,  0.25, 1.8 ],
     ['pothole', 'pothole',    80, 44,  0.5,  1   ],
   ];
   let pending = specs.length;
